@@ -1,14 +1,5 @@
 import Link from "next/link"
-import {
-  Calendar,
-  FileText,
-  UserPlus,
-  GraduationCap,
-  BookOpen,
-  UserCheck,
-  Database,
-  FolderSyncIcon as Sync,
-} from "lucide-react"
+import { Calendar, FileText, UserPlus, GraduationCap, BookOpen, UserCheck, FolderSyncIcon as Sync } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function HomePage() {
@@ -23,7 +14,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link href="/reunioes">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
@@ -116,21 +107,6 @@ export default function HomePage() {
             </Card>
           </Link>
 
-          <Link href="/configuracao">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database className="h-5 w-5 text-gray-600" />
-                  Configuração
-                </CardTitle>
-                <CardDescription>Configurar conexão com Supabase</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">Configure o banco de dados para persistência real dos dados.</p>
-              </CardContent>
-            </Card>
-          </Link>
-
           <Link href="/sincronizacao">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
@@ -145,34 +121,6 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </Link>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold mb-4">Sobre o Sistema</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-medium mb-2">Funcionalidades Principais</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Agendamento de reuniões com secretários municipais</li>
-                <li>• Cadastro completo de profissionais da educação</li>
-                <li>• Geração de relatórios detalhados</li>
-                <li>• Interface responsiva para dispositivos móveis</li>
-                <li>• Sincronização automática de dados</li>
-                <li>• Exportação de dados em múltiplos formatos</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium mb-2">Benefícios</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Centralização de informações educacionais</li>
-                <li>• Facilita a comunicação entre municípios</li>
-                <li>• Acompanhamento de projetos em tempo real</li>
-                <li>• Redução de trabalho administrativo</li>
-                <li>• Backup automático e recuperação de dados</li>
-                <li>• Melhoria na gestão de recursos humanos</li>
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
     </div>
