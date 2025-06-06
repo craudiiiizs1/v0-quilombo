@@ -1,9 +1,25 @@
 import { createClient } from "@supabase/supabase-js"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Verificar se as variáveis de ambiente estão definidas
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co"
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key"
+
+// Verificar se o Supabase está configurado
+export const isSupabaseConfigured =
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+  process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://placeholder.supabase.co"
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
+
+// Dados mock para quando o Supabase não estiver configurado
+export const mockMunicipios = [
+  { id: 1, nome: "São Paulo", estado: "SP", created_at: new Date().toISOString() },
+  { id: 2, nome: "Rio de Janeiro", estado: "RJ", created_at: new Date().toISOString() },
+  { id: 3, nome: "Belo Horizonte", estado: "MG", created_at: new Date().toISOString() },
+  { id: 4, nome: "Salvador", estado: "BA", created_at: new Date().toISOString() },
+  { id: 5, nome: "Fortaleza", estado: "CE", created_at: new Date().toISOString() },
+]
 
 // Tipos para as tabelas
 export interface Municipio {

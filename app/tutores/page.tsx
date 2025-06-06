@@ -18,8 +18,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { supabase, type Tutor, type Municipio } from "@/lib/supabase"
+import { supabase, isSupabaseConfigured, mockMunicipios, type Tutor, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
+import { SupabaseStatus } from "@/components/supabase-status"
 
 export default function Tutores() {
   const [tutores, setTutores] = useState<Tutor[]>([])
@@ -46,6 +47,14 @@ export default function Tutores() {
 
   const fetchTutores = async () => {
     try {
+      if (!isSupabaseConfigured) {
+        const storedTutores = localStorage.getItem("tutores")
+        const tutores = storedTutores ? JSON.parse(storedTutores) : []
+        setTutores(tutores)
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from("tutores")
         .select(`
@@ -61,11 +70,15 @@ export default function Tutores() {
       if (error) throw error
       setTutores(data || [])
     } catch (error) {
+      console.error("Erro ao carregar tutores:", error)
       toast({
-        title: "Erro",
-        description: "Erro ao carregar tutores",
-        variant: "destructive",
+        title: "Aviso",
+        description: "Usando dados locais. Configure o Supabase para persistência real.",
+        variant: "default",
       })
+      const storedTutores = localStorage.getItem("tutores")
+      const tutores = storedTutores ? JSON.parse(storedTutores) : []
+      setTutores(tutores)
     } finally {
       setLoading(false)
     }
@@ -73,12 +86,18 @@ export default function Tutores() {
 
   const fetchMunicipios = async () => {
     try {
+      if (!isSupabaseConfigured) {
+        setMunicipios(mockMunicipios)
+        return
+      }
+
       const { data, error } = await supabase.from("municipios").select("*").order("nome")
 
       if (error) throw error
       setMunicipios(data || [])
     } catch (error) {
       console.error("Erro ao carregar municípios:", error)
+      setMunicipios(mockMunicipios)
     }
   }
 
@@ -92,24 +111,47 @@ export default function Tutores() {
         experiencia_anos: formData.experiencia_anos ? Number.parseInt(formData.experiencia_anos) : null,
       }
 
-      if (editingTutor) {
-        const { error } = await supabase.from("tutores").update(tutorData).eq("id", editingTutor.id)
+      if (!isSupabaseConfigured) {
+        const storedTutores = localStorage.getItem("tutores")
+        let tutores = storedTutores ? JSON.parse(storedTutores) : []
 
-        if (error) throw error
-
-        toast({
-          title: "Sucesso",
-          description: "Tutor atualizado com sucesso!",
-        })
+        if (editingTutor) {
+          tutores = tutores.map((t) => (t.id === editingTutor.id ? { ...tutorData, id: editingTutor.id } : t))
+          localStorage.setItem("tutores", JSON.stringify(tutores))
+          toast({
+            title: "Sucesso",
+            description: "Tutor atualizado com sucesso!",
+          })
+        } else {
+          const newTutor = { ...tutorData, id: Date.now() }
+          tutores = [...tutores, newTutor]
+          localStorage.setItem("tutores", JSON.stringify(tutores))
+          toast({
+            title: "Sucesso",
+            description: "Tutor cadastrado com sucesso!",
+          })
+        }
+        setTutores(tutores)
       } else {
-        const { error } = await supabase.from("tutores").insert([tutorData])
+        if (editingTutor) {
+          const { error } = await supabase.from("tutores").update(tutorData).eq("id", editingTutor.id)
 
-        if (error) throw error
+          if (error) throw error
 
-        toast({
-          title: "Sucesso",
-          description: "Tutor cadastrado com sucesso!",
-        })
+          toast({
+            title: "Sucesso",
+            description: "Tutor atualizado com sucesso!",
+          })
+        } else {
+          const { error } = await supabase.from("tutores").insert([tutorData])
+
+          if (error) throw error
+
+          toast({
+            title: "Sucesso",
+            description: "Tutor cadastrado com sucesso!",
+          })
+        }
       }
 
       resetForm()
@@ -142,14 +184,26 @@ export default function Tutores() {
     if (!confirm("Tem certeza que deseja excluir este tutor?")) return
 
     try {
-      const { error } = await supabase.from("tutores").delete().eq("id", id)
+      if (!isSupabaseConfigured) {
+        const storedTutores = localStorage.getItem("tutores")
+        let tutores = storedTutores ? JSON.parse(storedTutores) : []
+        tutores = tutores.filter((t) => t.id !== id)
+        localStorage.setItem("tutores", JSON.stringify(tutores))
+        setTutores(tutores)
+        toast({
+          title: "Sucesso",
+          description: "Tutor excluído com sucesso!",
+        })
+      } else {
+        const { error } = await supabase.from("tutores").delete().eq("id", id)
 
-      if (error) throw error
+        if (error) throw error
 
-      toast({
-        title: "Sucesso",
-        description: "Tutor excluído com sucesso!",
-      })
+        toast({
+          title: "Sucesso",
+          description: "Tutor excluído com sucesso!",
+        })
+      }
 
       fetchTutores()
     } catch (error) {
@@ -188,6 +242,7 @@ export default function Tutores() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
+        <SupabaseStatus />
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Link href="/">

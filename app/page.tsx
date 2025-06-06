@@ -1,5 +1,14 @@
 import Link from "next/link"
-import { Calendar, FileText, UserPlus, GraduationCap, BookOpen, UserCheck } from "lucide-react"
+import {
+  Calendar,
+  FileText,
+  UserPlus,
+  GraduationCap,
+  BookOpen,
+  UserCheck,
+  Database,
+  FolderSyncIcon as Sync,
+} from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function HomePage() {
@@ -106,6 +115,36 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </Link>
+
+          <Link href="/configuracao">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="h-5 w-5 text-gray-600" />
+                  Configuração
+                </CardTitle>
+                <CardDescription>Configurar conexão com Supabase</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">Configure o banco de dados para persistência real dos dados.</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/sincronizacao">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sync className="h-5 w-5 text-yellow-600" />
+                  Sincronização
+                </CardTitle>
+                <CardDescription>Gerenciar sincronização de dados</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">Sincronize dados locais com o Supabase e resolva conflitos.</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -118,6 +157,7 @@ export default function HomePage() {
                 <li>• Cadastro completo de profissionais da educação</li>
                 <li>• Geração de relatórios detalhados</li>
                 <li>• Interface responsiva para dispositivos móveis</li>
+                <li>• Sincronização automática de dados</li>
                 <li>• Exportação de dados em múltiplos formatos</li>
               </ul>
             </div>
@@ -128,6 +168,7 @@ export default function HomePage() {
                 <li>• Facilita a comunicação entre municípios</li>
                 <li>• Acompanhamento de projetos em tempo real</li>
                 <li>• Redução de trabalho administrativo</li>
+                <li>• Backup automático e recuperação de dados</li>
                 <li>• Melhoria na gestão de recursos humanos</li>
               </ul>
             </div>

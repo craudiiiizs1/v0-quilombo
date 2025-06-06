@@ -20,8 +20,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { supabase, type Reuniao, type Municipio } from "@/lib/supabase"
+import { supabase, isSupabaseConfigured, mockMunicipios, type Reuniao, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
+import { SupabaseStatus } from "@/components/supabase-status"
 
 export default function Reunioes() {
   const [reunioes, setReunioes] = useState<Reuniao[]>([])
@@ -50,26 +51,40 @@ export default function Reunioes() {
 
   const fetchReunioes = async () => {
     try {
+      if (!isSupabaseConfigured) {
+        // Usar dados mock do localStorage
+        const storedReunioes = localStorage.getItem("reunioes")
+        const reunioes = storedReunioes ? JSON.parse(storedReunioes) : []
+        setReunioes(reunioes)
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from("reunioes")
         .select(`
-          *,
-          municipios (
-            id,
-            nome,
-            estado
-          )
-        `)
+        *,
+        municipios (
+          id,
+          nome,
+          estado
+        )
+      `)
         .order("data_reuniao", { ascending: true })
 
       if (error) throw error
       setReunioes(data || [])
     } catch (error) {
+      console.error("Erro ao carregar reuniões:", error)
       toast({
-        title: "Erro",
-        description: "Erro ao carregar reuniões",
-        variant: "destructive",
+        title: "Aviso",
+        description: "Usando dados locais. Configure o Supabase para persistência real.",
+        variant: "default",
       })
+      // Fallback para dados locais
+      const storedReunioes = localStorage.getItem("reunioes")
+      const reunioes = storedReunioes ? JSON.parse(storedReunioes) : []
+      setReunioes(reunioes)
     } finally {
       setLoading(false)
     }
@@ -77,12 +92,19 @@ export default function Reunioes() {
 
   const fetchMunicipios = async () => {
     try {
+      if (!isSupabaseConfigured) {
+        setMunicipios(mockMunicipios)
+        return
+      }
+
       const { data, error } = await supabase.from("municipios").select("*").order("nome")
 
       if (error) throw error
       setMunicipios(data || [])
     } catch (error) {
       console.error("Erro ao carregar municípios:", error)
+      // Fallback para dados mock
+      setMunicipios(mockMunicipios)
     }
   }
 
@@ -90,6 +112,41 @@ export default function Reunioes() {
     e.preventDefault()
 
     try {
+      const reuniaoData = {
+        ...formData,
+        municipio_id: Number.parseInt(formData.municipio_id),
+        id: editingReuniao?.id || Date.now(), // ID temporário para dados locais
+      }
+
+      if (!isSupabaseConfigured) {
+        // Usar localStorage
+        const storedReunioes = localStorage.getItem("reunioes")
+        let reunioes = storedReunioes ? JSON.parse(storedReunioes) : []
+
+        if (editingReuniao) {
+          reunioes = reunioes.map((r: any) => (r.id === editingReuniao.id ? reuniaoData : r))
+        } else {
+          reuniaoData.created_at = new Date().toISOString()
+          // Adicionar dados do município
+          const municipio = municipios.find((m) => m.id === reuniaoData.municipio_id)
+          reuniaoData.municipios = municipio
+          reunioes.push(reuniaoData)
+        }
+
+        localStorage.setItem("reunioes", JSON.stringify(reunioes))
+
+        toast({
+          title: "Sucesso",
+          description: editingReuniao ? "Reunião atualizada com sucesso!" : "Reunião agendada com sucesso!",
+        })
+
+        resetForm()
+        setIsDialogOpen(false)
+        fetchReunioes()
+        return
+      }
+
+      // Código original do Supabase...
       if (editingReuniao) {
         const { error } = await supabase
           .from("reunioes")
@@ -153,6 +210,22 @@ export default function Reunioes() {
     if (!confirm("Tem certeza que deseja excluir esta reunião?")) return
 
     try {
+      if (!isSupabaseConfigured) {
+        // Usar localStorage
+        const storedReunioes = localStorage.getItem("reunioes")
+        let reunioes = storedReunioes ? JSON.parse(storedReunioes) : []
+        reunioes = reunioes.filter((r: any) => r.id !== id)
+        localStorage.setItem("reunioes", JSON.stringify(reunioes))
+
+        toast({
+          title: "Sucesso",
+          description: "Reunião excluída com sucesso!",
+        })
+
+        fetchReunioes()
+        return
+      }
+
       const { error } = await supabase.from("reunioes").delete().eq("id", id)
 
       if (error) throw error
@@ -366,6 +439,8 @@ export default function Reunioes() {
             </DialogContent>
           </Dialog>
         </div>
+
+        <SupabaseStatus />
 
         <div className="grid gap-6">
           {reunioes.length === 0 ? (
