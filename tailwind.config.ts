@@ -20,13 +20,22 @@ const config: Config = {
     },
     extend: {
       colors: {
+        // Cores do projeto Escola Quilombo baseadas na cartilha PNEERQ
+        quilombo: {
+          orange: "#FF6B35", // Laranja principal da cartilha
+          "orange-light": "#FFB800", // Laranja claro/amarelo
+          green: "#1A472A", // Verde escuro
+          "green-light": "#2D5016", // Verde médio
+          turquoise: "#00BCD4", // Azul turquesa dos títulos
+          brown: "#8B4513", // Marrom terra
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#FF6B35", // Usando o laranja como cor primária
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
