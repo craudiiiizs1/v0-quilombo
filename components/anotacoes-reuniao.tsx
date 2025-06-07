@@ -75,14 +75,14 @@ export function AnotacoesReuniao({ reuniaoId }: AnotacoesReuniaoProps) {
     e.preventDefault()
 
     try {
-      const anotacaoData = {
-        ...formData,
-        reuniao_id: reuniaoId,
-        id: editingAnotacao?.id || Date.now(),
-      }
-
       if (!isSupabaseConfigured) {
-        // Usar localStorage
+        // Lógica para localStorage (mantém como está)
+        const anotacaoData = {
+          ...formData,
+          reuniao_id: reuniaoId,
+          id: editingAnotacao?.id || Date.now(),
+        }
+
         const storedAnotacoes = localStorage.getItem(`anotacoes_reuniao_${reuniaoId}`)
         let anotacoes = storedAnotacoes ? JSON.parse(storedAnotacoes) : []
 
@@ -109,8 +109,17 @@ export function AnotacoesReuniao({ reuniaoId }: AnotacoesReuniaoProps) {
         return
       }
 
+      // Lógica para Supabase (corrigida)
       if (editingAnotacao) {
-        const { error } = await supabase.from("anotacoes_reunioes").update(formData).eq("id", editingAnotacao.id)
+        // Para edição, enviar apenas os campos editáveis
+        const { error } = await supabase
+          .from("anotacoes_reunioes")
+          .update({
+            titulo: formData.titulo,
+            conteudo: formData.conteudo,
+            autor: formData.autor,
+          })
+          .eq("id", editingAnotacao.id)
 
         if (error) throw error
 
@@ -119,7 +128,15 @@ export function AnotacoesReuniao({ reuniaoId }: AnotacoesReuniaoProps) {
           description: "Anotação atualizada com sucesso!",
         })
       } else {
-        const { error } = await supabase.from("anotacoes_reunioes").insert([anotacaoData])
+        // Para inserção, enviar apenas os campos necessários (sem id)
+        const { error } = await supabase.from("anotacoes_reunioes").insert([
+          {
+            titulo: formData.titulo,
+            conteudo: formData.conteudo,
+            autor: formData.autor,
+            reuniao_id: reuniaoId,
+          },
+        ])
 
         if (error) throw error
 
@@ -133,6 +150,7 @@ export function AnotacoesReuniao({ reuniaoId }: AnotacoesReuniaoProps) {
       setIsDialogOpen(false)
       fetchAnotacoes()
     } catch (error) {
+      console.error("Erro ao salvar anotação:", error)
       toast({
         title: "Erro",
         description: "Erro ao salvar anotação",
