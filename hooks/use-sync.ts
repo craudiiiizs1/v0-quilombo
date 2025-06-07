@@ -61,13 +61,39 @@ export function useSync() {
   useEffect(() => {
     const countPendingChanges = () => {
       let count = 0
-      const tables = ["reunioes", "tutores", "supervisores", "cursistas", "formadores"]
+      const tables = [
+        "reunioes",
+        "tutores",
+        "supervisores",
+        "cursistas",
+        "formadores",
+        "anotacoes_reuniao_", // prefixo para localStorage
+        "anotacoes_tutor_",
+        "anotacoes_supervisor_",
+        "anotacoes_cursista_",
+        "anotacoes_formador_",
+      ]
 
+      // Modificar a lógica para contar anotações também:
       tables.forEach((table) => {
-        const data = localStorage.getItem(table)
-        if (data) {
-          const items = JSON.parse(data)
-          count += items.length
+        if (table.startsWith("anotacoes_")) {
+          // Para anotações, verificar todas as chaves que começam com o prefixo
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i)
+            if (key && key.startsWith(table)) {
+              const data = localStorage.getItem(key)
+              if (data) {
+                const items = JSON.parse(data)
+                count += items.length
+              }
+            }
+          }
+        } else {
+          const data = localStorage.getItem(table)
+          if (data) {
+            const items = JSON.parse(data)
+            count += items.length
+          }
         }
       })
 
@@ -147,7 +173,18 @@ export function useSync() {
     setSyncStatus((prev) => ({ ...prev, isSyncing: true }))
 
     try {
-      const tables = ["reunioes", "tutores", "supervisores", "cursistas", "formadores"]
+      const tables = [
+        "reunioes",
+        "tutores",
+        "supervisores",
+        "cursistas",
+        "formadores",
+        "anotacoes_reunioes",
+        "anotacoes_tutores",
+        "anotacoes_supervisores",
+        "anotacoes_cursistas",
+        "anotacoes_formadores",
+      ]
       let totalSynced = 0
       let hasErrors = false
       const allConflicts = []

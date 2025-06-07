@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog"
 import { supabase, type Cursista, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
+import { AnotacoesGenericas } from "@/components/anotacoes-genericas"
 
 export default function Cursistas() {
   const [cursistas, setCursistas] = useState<Cursista[]>([])
@@ -370,6 +371,10 @@ export default function Cursistas() {
                           <strong>Interesse:</strong> {cursista.curso_interesse}
                         </p>
                       )}
+                    </div>
+                    {/* Seção de Anotações */}
+                    <div className="mt-4 pt-4 border-t">
+                      <AnotacoesGenericas entityId={cursista.id} entityType="cursistas" entityName={cursista.nome} />
                     </div>
                   </CardContent>
                 </Card>

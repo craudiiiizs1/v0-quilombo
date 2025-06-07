@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import { supabase, type Formador, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
+import { AnotacoesGenericas } from "@/components/anotacoes-genericas"
 
 export default function Formadores() {
   const [formadores, setFormadores] = useState<Formador[]>([])
@@ -373,6 +374,10 @@ export default function Formadores() {
                           <p className="text-xs text-gray-600 mt-1">{formador.certificacoes}</p>
                         </div>
                       )}
+                    </div>
+                    {/* Seção de Anotações */}
+                    <div className="mt-4 pt-4 border-t">
+                      <AnotacoesGenericas entityId={formador.id} entityType="formadores" entityName={formador.nome} />
                     </div>
                   </CardContent>
                 </Card>

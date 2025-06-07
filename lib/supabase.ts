@@ -95,6 +95,7 @@ export interface Formador {
   municipios?: Municipio
 }
 
+// Tipos para anotações
 export interface AnotacaoReuniao {
   id: number
   reuniao_id: number
@@ -104,3 +105,53 @@ export interface AnotacaoReuniao {
   created_at: string
   updated_at: string
 }
+
+export interface AnotacaoTutor {
+  id: number
+  tutor_id: number
+  titulo: string
+  conteudo: string
+  autor: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AnotacaoSupervisor {
+  id: number
+  supervisor_id: number
+  titulo: string
+  conteudo: string
+  autor: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AnotacaoCursista {
+  id: number
+  cursista_id: number
+  titulo: string
+  conteudo: string
+  autor: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AnotacaoFormador {
+  id: number
+  formador_id: number
+  titulo: string
+  conteudo: string
+  autor: string
+  created_at: string
+  updated_at: string
+}
+
+// Tipo genérico para anotações
+export type AnotacaoGeneric = {
+  id: number
+  titulo: string
+  conteudo: string
+  autor: string
+  created_at: string
+  updated_at: string
+} & Record<string, any>

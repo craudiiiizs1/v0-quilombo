@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog"
 import { supabase, type Supervisor, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
+import { AnotacoesGenericas } from "@/components/anotacoes-genericas"
 
 export default function Supervisores() {
   const [supervisores, setSupervisores] = useState<Supervisor[]>([])
@@ -352,6 +353,14 @@ export default function Supervisores() {
                           <strong>Formação:</strong> {supervisor.formacao}
                         </p>
                       )}
+                    </div>
+                    {/* Seção de Anotações */}
+                    <div className="mt-4 pt-4 border-t">
+                      <AnotacoesGenericas
+                        entityId={supervisor.id}
+                        entityType="supervisores"
+                        entityName={supervisor.nome}
+                      />
                     </div>
                   </CardContent>
                 </Card>

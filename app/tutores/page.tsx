@@ -21,6 +21,7 @@ import {
 import { supabase, isSupabaseConfigured, mockMunicipios, type Tutor, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import { SupabaseStatus } from "@/components/supabase-status"
+import { AnotacoesGenericas } from "@/components/anotacoes-genericas"
 
 export default function Tutores() {
   const [tutores, setTutores] = useState<Tutor[]>([])
@@ -427,6 +428,10 @@ export default function Tutores() {
                           <strong>Experiência:</strong> {tutor.experiencia_anos} anos
                         </p>
                       )}
+                    </div>
+                    {/* Seção de Anotações */}
+                    <div className="mt-4 pt-4 border-t">
+                      <AnotacoesGenericas entityId={tutor.id} entityType="tutores" entityName={tutor.nome} />
                     </div>
                   </CardContent>
                 </Card>
