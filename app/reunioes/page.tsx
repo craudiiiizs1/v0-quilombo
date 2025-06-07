@@ -23,6 +23,7 @@ import {
 import { supabase, isSupabaseConfigured, mockMunicipios, type Reuniao, type Municipio } from "@/lib/supabase"
 import { useToast } from "@/hooks/use-toast"
 import { SupabaseStatus } from "@/components/supabase-status"
+import { AnotacoesReuniao } from "@/components/anotacoes-reuniao"
 
 export default function Reunioes() {
   const [reunioes, setReunioes] = useState<Reuniao[]>([])
@@ -505,6 +506,11 @@ export default function Reunioes() {
                       <p className="text-gray-600 text-sm">{reuniao.observacoes}</p>
                     </div>
                   )}
+
+                  {/* Seção de Anotações */}
+                  <div className="mt-4 pt-4 border-t">
+                    <AnotacoesReuniao reuniaoId={reuniao.id} />
+                  </div>
                 </CardContent>
               </Card>
             ))

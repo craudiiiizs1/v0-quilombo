@@ -94,3 +94,13 @@ export interface Formador {
   created_at: string
   municipios?: Municipio
 }
+
+export interface AnotacaoReuniao {
+  id: number
+  reuniao_id: number
+  titulo: string
+  conteudo: string
+  autor: string
+  created_at: string
+  updated_at: string
+}
