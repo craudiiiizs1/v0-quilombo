@@ -8,7 +8,7 @@ export class PWAManager {
   private isInstalled = false
   private swRegistration: ServiceWorkerRegistration | null = null
   private isSecureContext = false
-  private hasServiceWorkerSupport = false
+  private _hasServiceWorkerSupport = false
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -30,7 +30,7 @@ export class PWAManager {
     this.setupPWAEvents()
 
     // Registrar Service Worker APENAS em contexto seguro
-    if (this.isSecureContext && this.hasServiceWorkerSupport) {
+    if (this.isSecureContext && this._hasServiceWorkerSupport) {
       try {
         await this.registerServiceWorker()
         console.log("PWA: Service Worker registrado com sucesso")
@@ -49,8 +49,8 @@ export class PWAManager {
   }
 
   private checkSupport() {
-    this.hasServiceWorkerSupport = "serviceWorker" in navigator
-    console.log("PWA: Suporte a Service Worker:", this.hasServiceWorkerSupport)
+    this._hasServiceWorkerSupport = "serviceWorker" in navigator
+    console.log("PWA: Suporte a Service Worker:", this._hasServiceWorkerSupport)
   }
 
   private checkSecureContext() {
@@ -82,7 +82,7 @@ export class PWAManager {
 
   async registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
     // Verificações de segurança ANTES de tentar registrar
-    if (!this.hasServiceWorkerSupport) {
+    if (!this._hasServiceWorkerSupport) {
       console.log("PWA: Service Worker não suportado pelo navegador")
       return null
     }
@@ -388,7 +388,7 @@ export class PWAManager {
   // Método para verificar se PWA está funcionando corretamente
   getStatus() {
     return {
-      hasServiceWorkerSupport: this.hasServiceWorkerSupport,
+      hasServiceWorkerSupport: this._hasServiceWorkerSupport,
       isSecureContext: this.isSecureContext,
       isServiceWorkerRegistered: !!this.swRegistration,
       isInstalled: this.isInstalled,
@@ -419,7 +419,11 @@ export class PWAManager {
   }
 
   get hasServiceWorkerSupport(): boolean {
-    return this.hasServiceWorkerSupport
+    return this._hasServiceWorkerSupport
+  }
+  
+  set hasServiceWorkerSupport(value: boolean) {
+    this._hasServiceWorkerSupport = value
   }
 }
 
